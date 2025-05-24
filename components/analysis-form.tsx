@@ -32,7 +32,7 @@ export function AnalysisForm() {
       })
 
       const data = await response.json()
-      setResult(data.result)
+      setResult(data.analysis)
     } catch (error) {
       console.error("Error analyzing:", error)
     } finally {
