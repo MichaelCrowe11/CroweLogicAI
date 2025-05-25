@@ -1,30 +1,28 @@
-# New Project
+# Crowe Logic AI
 
-*Automatically synced with your [v0.dev](https://v0.dev) deployments*
+This project is a Next.js application for managing mycology and ecological workflows. It uses Tailwind CSS and ShadCN UI components.
 
-[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/michaelcrowe11s-projects/v0-new-project-utisgnms5lx)
-[![Built with v0](https://img.shields.io/badge/Built%20with-v0.dev-black?style=for-the-badge)](https://v0.dev/chat/projects/uTIsGNMS5lx)
+## Setup
 
-## Overview
+1. Install dependencies with `pnpm install`.
+2. Copy `.env.example` to `.env.local` and fill in required values.
+3. Start the development server:
 
-This repository will stay in sync with your deployed chats on [v0.dev](https://v0.dev).
-Any changes you make to your deployed app will be automatically pushed to this repository from [v0.dev](https://v0.dev).
+```bash
+pnpm dev
+```
 
-## Deployment
+Additional scripts:
 
-Your project is live at:
+```bash
+pnpm lint
+pnpm build
+```
 
-**[https://vercel.com/michaelcrowe11s-projects/v0-new-project-utisgnms5lx](https://vercel.com/michaelcrowe11s-projects/v0-new-project-utisgnms5lx)**
+## Roadmap
 
-## Build your app
+See [ROADMAP.md](./ROADMAP.md) for project milestones and future plans.
 
-Continue building your app on:
+## License
 
-**[https://v0.dev/chat/projects/uTIsGNMS5lx](https://v0.dev/chat/projects/uTIsGNMS5lx)**
-
-## How It Works
-
-1. Create and modify your project using [v0.dev](https://v0.dev)
-2. Deploy your chats from the v0 interface
-3. Changes are automatically pushed to this repository
-4. Vercel deploys the latest version from this repository
+This project is licensed under the MIT License. See [LICENSE](./LICENSE) for details.
