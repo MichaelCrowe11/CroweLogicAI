@@ -26,4 +26,3 @@ See [ROADMAP.md](./ROADMAP.md) for project milestones and future plans.
 ## License
 
 This project is licensed under the MIT License. See [LICENSE](./LICENSE) for details.
-
