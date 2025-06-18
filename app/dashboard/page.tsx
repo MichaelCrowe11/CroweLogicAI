@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { PlusCircle, Microscope, Leaf, ListTodo, MessageSquare } from "lucide-react"
+import { OpenAIStatus } from "@/components/openai-status"
 import Link from "next/link"
 
 export default function DashboardPage() {
@@ -14,6 +15,9 @@ export default function DashboardPage() {
           New Farm
         </Button>
       </div>
+
+      {/* OpenAI Status Card */}
+      <OpenAIStatus />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card>
