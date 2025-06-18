@@ -19,6 +19,26 @@ pnpm lint
 pnpm build
 ```
 
+### Production Build
+
+Compile the app and start it in production mode:
+
+```bash
+pnpm build
+pnpm start
+```
+
+## Bootstrap a New Project
+
+You can scaffold a fresh Crowe Logic AI instance using the helper script. Pass a project name as an optional argument:
+
+```bash
+./scripts/setup.sh my-new-project
+```
+
+This script installs the core dependencies, initializes GitHub, and prepares the
+basic folder structure with a local environment file.
+
 ## Roadmap
 
 See [ROADMAP.md](./ROADMAP.md) for project milestones and future plans.
