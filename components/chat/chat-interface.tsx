@@ -16,23 +16,34 @@ export function ChatInterface() {
   const chatId = searchParams.get("id")
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [inputValue, setInputValue] = useState("")
+  const [isClient, setIsClient] = useState(false)
 
-  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages } = useChat({
+  // Ensure client-side only rendering for dynamic content
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  const { messages, input, handleInputChange, handleSubmit, isLoading, error } = useChat({
     api: "/api/chat",
     body: { chatId },
     onResponse: (response) => {
       // Get chat ID from response headers
       const newChatId = response.headers.get("X-Chat-Id")
-      if (newChatId && !chatId) {
+      if (newChatId && !chatId && isClient) {
         router.push(`/chat?id=${newChatId}`)
       }
     },
+    onError: (error) => {
+      console.error("Chat error:", error)
+    }
   })
 
   // Scroll to bottom when messages change
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [messages])
+    if (isClient && messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+    }
+  }, [messages, isClient])
 
   // Handle form submission
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -41,6 +52,22 @@ export function ChatInterface() {
       handleSubmit(e)
       setInputValue("")
     }
+  }
+
+  // Don't render dynamic content until client-side
+  if (!isClient) {
+    return (
+      <div className="flex flex-col h-[calc(100vh-4rem)] max-w-4xl mx-auto">
+        <div className="flex flex-col items-center justify-center flex-1 p-8">
+          <div className="relative w-24 h-24 mb-4 rounded-full border-4 border-earth-mushroom overflow-hidden">
+            <Image src="/images/crowe-avatar.png" alt="Crowe Logic AI" fill className="object-cover" />
+          </div>
+          <h2 className="text-xl font-semibold text-center">
+            Loading Crowe Logic AI...
+          </h2>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -103,7 +130,7 @@ export function ChatInterface() {
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {messages.map((message, index) => (
             <div
-              key={index}
+              key={message.id || index}
               className={`flex ${message.role === "user" ? "justify-end" : "justify-start"} ${
                 index === 0 && message.role === "assistant" ? "pt-4" : ""
               }`}
@@ -124,6 +151,16 @@ export function ChatInterface() {
               </div>
             </div>
           ))}
+          {error && (
+            <div className="flex justify-start">
+              <div className="relative w-8 h-8 mr-2 rounded-full overflow-hidden border-2 border-earth-mushroom flex-shrink-0">
+                <Image src="/images/crowe-avatar.png" alt="Crowe Logic AI" fill className="object-cover" />
+              </div>
+              <div className="max-w-[80%] rounded-lg p-4 bg-destructive/10 text-destructive border border-destructive/20">
+                <div className="whitespace-pre-wrap">{error.message}</div>
+              </div>
+            </div>
+          )}
           <div ref={messagesEndRef} />
         </div>
       )}
@@ -144,6 +181,7 @@ export function ChatInterface() {
             }}
             placeholder="Ask about mycology, cultivation techniques, or farm management..."
             className="flex-1 min-h-[50px] max-h-[200px] resize-none"
+            disabled={isLoading}
           />
           <div className="flex gap-2">
             <Button type="button" variant="outline" size="icon" className="rounded-full">

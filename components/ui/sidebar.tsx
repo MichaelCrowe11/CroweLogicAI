@@ -13,7 +13,7 @@ import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
@@ -57,6 +57,7 @@ const SidebarProvider = React.forwardRef<
 >(({ defaultOpen = true, open: openProp, onOpenChange: setOpenProp, className, style, children, ...props }, ref) => {
   const isMobile = useIsMobile()
   const [openMobile, setOpenMobile] = React.useState(false)
+  const [isClient, setIsClient] = React.useState(false)
 
   // This is the internal state of the sidebar.
   // We use openProp and setOpenProp for control from outside the component.
@@ -64,6 +65,8 @@ const SidebarProvider = React.forwardRef<
   const open = openProp ?? _open
   const setOpen = React.useCallback(
     (value: boolean | ((value: boolean) => boolean)) => {
+      if (!isClient) return
+      
       const openState = typeof value === "function" ? value(open) : value
       if (setOpenProp) {
         setOpenProp(openState)
@@ -72,9 +75,11 @@ const SidebarProvider = React.forwardRef<
       }
 
       // This sets the cookie to keep the sidebar state.
-      document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
+      if (typeof document !== 'undefined') {
+        document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
+      }
     },
-    [setOpenProp, open],
+    [setOpenProp, open, isClient],
   )
 
   // Helper to toggle the sidebar.
@@ -82,8 +87,15 @@ const SidebarProvider = React.forwardRef<
     return isMobile ? setOpenMobile((open) => !open) : setOpen((open) => !open)
   }, [isMobile, setOpen, setOpenMobile])
 
+  // Ensure client-side only rendering for dynamic content
+  React.useEffect(() => {
+    setIsClient(true)
+  }, [])
+
   // Adds a keyboard shortcut to toggle the sidebar.
   React.useEffect(() => {
+    if (!isClient) return
+    
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === SIDEBAR_KEYBOARD_SHORTCUT && (event.metaKey || event.ctrlKey)) {
         event.preventDefault()
@@ -93,7 +105,7 @@ const SidebarProvider = React.forwardRef<
 
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [toggleSidebar])
+  }, [toggleSidebar, isClient])
 
   // We add a state so that we can do data-state="expanded" or "collapsed".
   // This makes it easier to style the sidebar with Tailwind classes.
@@ -111,6 +123,30 @@ const SidebarProvider = React.forwardRef<
     }),
     [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar],
   )
+
+  if (!isClient) {
+    return (
+      <div className="flex min-h-svh w-full">
+        <div className="w-64 bg-background border-r">
+          <div className="flex flex-col h-full">
+            <div className="flex items-center justify-center p-6 border-b">
+              <Skeleton className="w-10 h-10 rounded-full mr-2" />
+              <div>
+                <Skeleton className="h-6 w-24 mb-1" />
+                <Skeleton className="h-4 w-32" />
+              </div>
+            </div>
+            <div className="flex-1 p-4 space-y-2">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Skeleton key={i} className="h-10 w-full" />
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="flex-1">{children}</div>
+      </div>
+    )
+  }
 
   return (
     <SidebarContext.Provider value={contextValue}>
@@ -145,6 +181,11 @@ const Sidebar = React.forwardRef<
 >(({ side = "left", variant = "sidebar", collapsible = "offcanvas", className, children, ...props }, ref) => {
   const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   const routes = [
     {
@@ -178,6 +219,10 @@ const Sidebar = React.forwardRef<
       icon: Settings,
     },
   ]
+
+  if (!isClient) {
+    return null
+  }
 
   return (
     <>
@@ -230,10 +275,12 @@ const Sidebar = React.forwardRef<
 
           {/* New Chat Button */}
           <div className="p-4 border-t">
-            <Button className="w-full" variant="default">
-              <PlusCircle className="h-4 w-4 mr-2" />
-              New Chat
-            </Button>
+            <Link href="/chat">
+              <Button className="w-full" variant="default" onClick={() => setIsOpen(false)}>
+                <PlusCircle className="h-4 w-4 mr-2" />
+                New Chat
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
