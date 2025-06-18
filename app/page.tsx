@@ -5,8 +5,8 @@ import { ArrowRight } from "lucide-react"
 export default function Home() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-mycelium">
-      <div className="container mx-auto px-4">
-        <div className="max-w-md mx-auto text-center space-y-6">
+      <div className="w-full max-w-md mx-auto px-4">
+        <div className="text-center space-y-6">
           <div className="mx-auto w-24 h-24 relative rounded-full border-4 border-earth-mushroom overflow-hidden">
             <img src="/images/crowe-avatar.png" alt="Crowe Logic AI" className="object-cover w-full h-full" />
           </div>
