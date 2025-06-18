@@ -55,22 +55,36 @@ export const ANALYSIS_PROMPTS = {
 
 // Chat function
 export async function getChatResponse(messages: Message[]) {
-  const result = streamText({
-    model: openai("gpt-4o"),
-    messages: [
-      { role: "system", content: SYSTEM_PROMPT },
-      ...messages.map((m) => ({ role: m.role, content: m.content })),
-    ],
-  })
+  // Check if OpenAI API key is configured
+  if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'your-openai-api-key-here') {
+    throw new Error('OpenAI API key is not configured. Please set OPENAI_API_KEY in your environment variables.')
+  }
 
-  return result
+  try {
+    const result = streamText({
+      model: openai("gpt-4o-mini"), // Using gpt-4o-mini for better availability
+      messages: [
+        { role: "system", content: SYSTEM_PROMPT },
+        ...messages.map((m) => ({ role: m.role, content: m.content })),
+      ],
+    })
+
+    return result
+  } catch (error) {
+    console.error("Error getting chat response:", error)
+    throw new Error("Failed to get chat response. Please check your OpenAI API configuration.")
+  }
 }
 
 // Analysis function
 export async function analyzeImage(type: keyof typeof ANALYSIS_PROMPTS, imageUrl: string) {
+  if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'your-openai-api-key-here') {
+    throw new Error('OpenAI API key is not configured. Please set OPENAI_API_KEY in your environment variables.')
+  }
+
   try {
     const { text } = await generateText({
-      model: openai("gpt-4o"),
+      model: openai("gpt-4o-mini"),
       messages: [
         { role: "system", content: SYSTEM_PROMPT },
         { role: "user", content: `${ANALYSIS_PROMPTS[type]}\n\nImage URL: ${imageUrl}` },
@@ -86,9 +100,13 @@ export async function analyzeImage(type: keyof typeof ANALYSIS_PROMPTS, imageUrl
 
 // Generate daily tasks
 export async function generateDailyTasks(userId: string, farmContext: string) {
+  if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'your-openai-api-key-here') {
+    throw new Error('OpenAI API key is not configured. Please set OPENAI_API_KEY in your environment variables.')
+  }
+
   try {
     const { object } = await generateObject({
-      model: openai("gpt-4o"),
+      model: openai("gpt-4o-mini"),
       schema: z.object({
         tasks: z.array(
           z.object({
@@ -113,9 +131,13 @@ export async function generateDailyTasks(userId: string, farmContext: string) {
 
 // Generate strain recommendations
 export async function recommendStrains(farmContext: string, goals: string) {
+  if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY === 'your-openai-api-key-here') {
+    throw new Error('OpenAI API key is not configured. Please set OPENAI_API_KEY in your environment variables.')
+  }
+
   try {
     const { object } = await generateObject({
-      model: openai("gpt-4o"),
+      model: openai("gpt-4o-mini"),
       schema: z.object({
         recommendations: z.array(
           z.object({
