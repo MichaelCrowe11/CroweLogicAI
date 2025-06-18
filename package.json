@@ -1,12 +1,21 @@
 {
-  "name": "my-v0-project",
-  "version": "0.1.0",
+  "name": "crowe-logic-ai",
+  "version": "1.0.0",
   "private": true,
+  "description": "Expert AI for mycology, environmental intelligence, and business strategy",
+  "author": "Michael Crowe",
+  "license": "MIT",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "type-check": "tsc --noEmit",
+    "docker:build": "DOCKER_BUILD=true docker build -t crowe-logic-ai .",
+    "docker:run": "docker run -p 3000:3000 crowe-logic-ai",
+    "deploy:vercel": "vercel --prod",
+    "deploy:netlify": "netlify deploy --prod --dir=.next"
   },
   "dependencies": {
     "@ai-sdk/openai": "latest",
@@ -44,7 +53,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.0.4",
-    "date-fns": "4.1.0",
+    "date-fns": "^3.0.0",
     "embla-carousel-react": "8.5.1",
     "input-otp": "1.4.1",
     "lucide-react": "^0.454.0",
@@ -70,5 +79,19 @@
     "postcss": "^8",
     "tailwindcss": "^3.4.17",
     "typescript": "^5"
-  }
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "keywords": [
+    "mycology",
+    "mushroom-cultivation",
+    "ai-assistant",
+    "farm-management",
+    "environmental-intelligence",
+    "next.js",
+    "react",
+    "typescript"
+  ]
 }
