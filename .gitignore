@@ -18,6 +18,7 @@ yarn-error.log*
 
 # env files
 .env*
+!.env.example
 
 # vercel
 .vercel
@@ -26,4 +27,4 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 # .env.local file (add to .gitignore)
-OPENAI_API_KEY=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
+.env
